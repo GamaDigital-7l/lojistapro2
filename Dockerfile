@@ -3,13 +3,16 @@ FROM node:20-alpine as builder
 
 WORKDIR /app
 
-# Copy package.json and install dependencies
-COPY package.json package-lock.json ./
-RUN npm install
+# Install pnpm globally
+RUN npm install -g pnpm
+
+# Copy package.json and lock file
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install
 
 # Copy source code and build the app
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
 # Stage 2: Serve the application with Nginx
 FROM nginx:stable-alpine as production
